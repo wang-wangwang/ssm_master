@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oracle.web.mapper.MonsterMapper">
+	<resultMap id="BaseResultMap" type="com.oracle.web.bean.Monster">
+		<id column="MONSTER_ID" jdbcType="INTEGER" property="monsterId" />
+		<result column="MNAME" jdbcType="VARCHAR" property="mname" />
+		<result column="EMAIL" jdbcType="VARCHAR" property="email" />
+		<result column="BIRTHDAY" jdbcType="DATE" property="birthday" />
+		<result column="ENTRYDAY" jdbcType="DATE" property="entryday" />
+		<result column="SCHOOL" jdbcType="INTEGER" property="school" />
+	</resultMap>
+
+	<resultMap id="SubMonsterResultMap" type="SubMonster">
+		<id column="MONSTER_ID" jdbcType="INTEGER" property="monsterId" />
+		<result column="MNAME" jdbcType="VARCHAR" property="mname" />
+		<result column="EMAIL" jdbcType="VARCHAR" property="email" />
+		<result column="BIRTHDAY" jdbcType="DATE" property="birthday" />
+		<result column="ENTRYDAY" jdbcType="DATE" property="entryday" />
+		<association property="schools" javaType="School" column="school"
+			select="com.oracle.web.mapper.SchoolMapper.selectByPrimaryKey"></association>
+	</resultMap>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from
+		monster
+		where MONSTER_ID = #{monsterId,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.oracle.web.bean.Monster">
+		insert into monster
+		(MONSTER_ID, MNAME, EMAIL,
+		BIRTHDAY, ENTRYDAY, SCHOOL
+		)
+		values
+		(#{monsterId,jdbcType=INTEGER}, #{mname,jdbcType=VARCHAR},
+		#{email,jdbcType=VARCHAR},
+		#{birthday,jdbcType=DATE},
+		#{entryday,jdbcType=DATE}, #{school,jdbcType=INTEGER}
+		)
+	</insert>
+	<update id="updateByPrimaryKey" parameterType="com.oracle.web.bean.Monster">
+		update monster
+		set
+		MNAME = #{mname,jdbcType=VARCHAR},
+		EMAIL = #{email,jdbcType=VARCHAR},
+		BIRTHDAY = #{birthday,jdbcType=DATE},
+		ENTRYDAY =
+		#{entryday,jdbcType=DATE},
+		SCHOOL = #{school,jdbcType=INTEGER}
+		where
+		MONSTER_ID = #{monsterId,jdbcType=INTEGER}
+	</update>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer"
+		resultMap="BaseResultMap">
+		select MONSTER_ID, MNAME, EMAIL, BIRTHDAY, ENTRYDAY, SCHOOL
+		from monster
+		where MONSTER_ID = #{monsterId,jdbcType=INTEGER}
+	</select>
+	<select id="selectAll" resultMap="SubMonsterResultMap">
+		select MONSTER_ID, MNAME,
+		EMAIL, BIRTHDAY, ENTRYDAY, SCHOOL
+		from monster
+	</select>
+	<select id="counts" resultType="Integer">
+		SELECT COUNT(*) FROM Monster
+	</select>
+	<select id="Bypage" parameterType="java.lang.Integer" resultMap="SubMonsterResultMap">
+		SELECT * FROM monster ORDER BY MONSTER_ID ASC LIMIT #{i},5
+	</select>
+	<select id="selectAllByPageHelper" resultMap="SubMonsterResultMap">
+	   SELECT * FROM monster ORDER BY MONSTER_ID ASC
+	</select>
+</mapper>
